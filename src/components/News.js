@@ -3,6 +3,7 @@ import NewsItem from './NewsItem';
 import PropTypes from 'prop-types';
 import InfiniteScroll from "react-infinite-scroll-component";
 import Spiner from './Spiner';
+import axios from 'axios';
 
 const News = (props) => {
 
@@ -15,9 +16,13 @@ const News = (props) => {
         props.setProgress(10);
         setLoading(true);
         const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${1}&pageSize=${props.pageSize}`;
-        let data = await fetch(url);
+        let response = await axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${props.apiKey}`
+            }
+        });
         props.setProgress(30);
-        let parsedData = await data.json();
+        let parsedData = response.data;
         props.setProgress(70);
         setArticles(parsedData.articles);
         setTotalResults(parsedData.totalResults);
@@ -33,8 +38,12 @@ const News = (props) => {
     const fetchMoreData = async () => {
         const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
         setPage(page + 1);
-        let data = await fetch(url);
-        let parsedData = await data.json();
+        let response = await axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${props.apiKey}`
+            }
+        });
+        let parsedData = await response.data;
         setArticles(articles.concat(parsedData.articles));
         // setTotalResults(parsedData.totalResults);
     }
