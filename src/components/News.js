@@ -15,12 +15,9 @@ const News = (props) => {
     const updateNews = async ()=> {
         props.setProgress(10);
         setLoading(true);
-        const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${1}&pageSize=${props.pageSize}`;
-        let response = await axios.get(url, {
-            headers: {
-                'Authorization': `Bearer ${props.apiKey}`
-            }
-        });
+        const url = `${process.env.REACT_APP_BASE_URL}/top-headlines?category=${props.category}&page=${1}`;
+        axios.defaults.withCredentials = true;
+        let response = await axios.get(url);
         props.setProgress(30);
         let parsedData = response.data;
         props.setProgress(70);
@@ -36,14 +33,11 @@ const News = (props) => {
     }, []);
     
     const fetchMoreData = async () => {
-        const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
+        const url = `${process.env.REACT_APP_BASE_URL}/top-headlines?category=${props.category}&page=${page+1}`;
         setPage(page + 1);
-        let response = await axios.get(url, {
-            headers: {
-                'Authorization': `Bearer ${props.apiKey}`
-            }
-        });
-        let parsedData = await response.data;
+        axios.defaults.withCredentials = true;
+        let response = await axios.get(url);
+        let parsedData = response.data;
         setArticles(articles.concat(parsedData.articles));
         // setTotalResults(parsedData.totalResults);
     }
